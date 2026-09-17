@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>五十音听写练习</title>
+    <style>
+        /* 基础重置与全局样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* 顶部标题栏 28px */
+        .header {
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 30px;
+            margin-top: 20px;
+        }
+
+        /* 主内容卡片居中 */
+        .main-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px 20px;
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 卡片小标题 22px */
+        .card-title {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        /* 提示文字 16px */
+        .prompt-text {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 15px;
+            text-align: center;
+            min-height: 24px;
+        }
+
+        /* 播放按钮区域 */
+        .play-area {
+            margin-bottom: 20px;
+        }
+
+        .btn-play {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-play:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-play:active {
+            transform: scale(0.95);
+        }
+
+        /* 输入框宽度足够 16px */
+        .input-area {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: #007bff;
+        }
+
+        /* 按钮组，按钮样式统一 */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            flex: 1;
+            max-width: 150px;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .btn-next {
+            background-color: #6c757d;
+            color: #fff;
+        }
+
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 结果反馈区 */
+        .feedback {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            min-height: 24px;
+            width: 100%;
+        }
+
+        /* 颜色要求 */
+        .feedback.correct {
+            color: #28a745; /* 正确提示用绿色 */
+        }
+
+        .feedback.wrong {
+            color: #dc3545; /* 错误提示用红色 */
+        }
+
+        /* 底部说明文字 14px */
+        .footer {
+            font-size: 14px;
+            color: #888;
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        /* 适配手机端 */
+        @media (max-width: 480px) {
+            .header { font-size: 24px; }
+            .card { padding: 20px 15px; }
+            .btn-play { width: 70px; height: 70px; font-size: 14px; }
+            .btn-group { flex-direction: column; align-items: center; }
+            .btn { max-width: 100%; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部标题栏 -->
+    <div class="header">五十音听写练习</div>
+
+    <!-- 主内容区 -->
+    <div class="main-container">
+        <div class="card">
+            <div class="card-title">听写练习</div>
+            
+            <div class="prompt-text" id="promptText">点击下方按钮开始朗读</div>
+            
+            <div class="play-area">
+                <button class="btn-play" id="btnPlay">开始朗读</button>
+            </div>
+
+            <div class="input-area">
+                <input type="text" class="input-field" id="inputAnswer" placeholder="请输入你听到的假名" autocomplete="off">
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-submit" id="btnSubmit">提交答案</button>
+                <button class="btn btn-next" id="btnNext" disabled>下一题</button>
+            </div>
+
+            <!-- 结果反馈区 -->
+            <div class="feedback" id="feedback"></div>
+        </div>
+    </div>
+
+    <!-- 底部说明文字 -->
+    <div class="footer">听发音，写出你听到的假名。</div>
+
+    <script>
+        // 1. 准备五十音图数据 (平假名为主)
+        const kanaData = [
+            'あ', 'い', 'う', 'え', 'お',
+            'か', 'き', 'く', 'け', 'こ',
+            'さ', 'し', 'す', 'せ', 'そ',
+            'た', 'ち', 'つ', 'て', 'と',
+            'な', 'に', 'ぬ', 'ね', 'の',
+            'は', 'ひ', 'ふ', 'へ', 'ほ',
+            'ま', 'み', 'む', 'め', 'も',
+            'や', 'ゆ', 'よ',
+            'ら', 'り', 'る', 'れ', 'ろ',
+            'わ', 'を', 'ん'
+        ];
+
+        // 状态变量
+        let currentKana = '';
+        let isPlaying = false;
+
+        // DOM 元素获取
+        const btnPlay = document.getElementById('btnPlay');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const btnNext = document.getElementById('btnNext');
+        const inputAnswer = document.getElementById('inputAnswer');
+        const feedback = document.getElementById('feedback');
+        const promptText = document.getElementById('promptText');
+
+        // 初始化：页面打开后自动准备数据（随机抽取第一题，但不读）
+        function initGame() {
+            inputAnswer.value = '';
+            feedback.textContent = '';
+            feedback.className = 'feedback';
+            btnSubmit.disabled = false;
+            btnNext.disabled = true;
+            promptText.textContent = '点击下方按钮开始朗读';
+        }
+
+        // 随机抽取假名
+        function getRandomKana() {
+            let newKana = currentKana;
+            // 确保下一次抽取的假名和当前不一样（防止连续重复）
+            while (newKana === currentKana && kanaData.length > 1) {
+                const randomIndex = Math.floor(Math.random() * kanaData.length);
+                newKana = kanaData[randomIndex];
+            }
+            return newKana;
+        }
+
+        // AI 朗读功能 (利用浏览器 Web Speech API)
+        function speakKana(text) {
+            // 停止之前的朗读
+            window.speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ja-JP'; // 设置为日语
+            utterance.rate = 0.8;     // 语速稍慢，适合听写
+            
+            utterance.onstart = () => {
+                isPlaying = true;
+                btnPlay.textContent = '播放中...';
+                promptText.textContent = '正在朗读，请仔细听...';
+            };
+            
+            utterance.onend = () => {
+                isPlaying = false;
+                btnPlay.textContent = '开始朗读';
+                promptText.textContent = '请写出你听到的假名';
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // 按钮事件：开始朗读
+        btnPlay.addEventListener('click', () => {
+            if (isPlaying) return;
+            
+            // 如果当前没有题目，抽一题
+            if (!currentKana) {
+                currentKana = getRandomKana();
+            }
+            
+            speakKana(currentKana);
+            inputAnswer.focus(); // 自动聚焦到输入框
+            feedback.textContent = ''; // 清空之前的反馈
+            feedback.className = 'feedback';
+            btnSubmit.disabled = false;
+            btnNext.disabled = true;
+        });
+
+        // 按钮事件：提交答案
+        btnSubmit.addEventListener('click', () => {
+            const userAnswer = inputAnswer.value.trim();
+            
+            if (!currentKana) {
+                feedback.textContent = '请先点击开始朗读！';
+                feedback.className = 'feedback wrong';
+                return;
+            }
+
+            if (!userAnswer) {
+                feedback.textContent = '请先输入你的答案！';
+                feedback.className = 'feedback wrong';
+                return;
+            }
+
+            // 判断对错 (支持平假名)
+            if (userAnswer === currentKana) {
+                feedback.textContent = '正确！';
+                feedback.className = 'feedback correct';
+                btnSubmit.disabled = true;
+                btnNext.disabled = false;
+            } else {
+                feedback.textContent = `错误，正确答案是…… ${currentKana}`;
+                feedback.className = 'feedback wrong';
+                btnSubmit.disabled = true;
+                btnNext.disabled = false;
+            }
+        });
+
+        // 按钮事件：下一题
+        btnNext.addEventListener('click', () => {
+            currentKana = getRandomKana();
+            inputAnswer.value = '';
+            feedback.textContent = '';
+            feedback.className = 'feedback';
+            promptText.textContent = '点击下方按钮开始朗读';
+            btnNext.disabled = true;
+            btnSubmit.disabled = false;
+            
+            // 自动朗读下一题
+            speakKana(currentKana);
+            inputAnswer.focus();
+        });
+
+        // 监听回车键，方便快速提交
+        inputAnswer.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                if (!btnSubmit.disabled) {
+                    btnSubmit.click();
+                } else if (!btnNext.disabled) {
+                    btnNext.click();
+                }
+            }
+        });
+
+        // 启动初始化
+        initGame();
+    </script>
+</body>
+</html>

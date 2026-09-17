@@ -1,1 +1,30 @@
-
+.icon-dir {
+      background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAWBAMAAAAyb6E1AAAAD1BMVEXM////zJmZZjMzMzMAAABDPc8lAAAAAXRSTlMAQObYZgAAAE1JREFUCFtjYCAFuAABhMUiCAQOYKYjiCni4gLkOYGYikAeUFQJCIA8IQeIAiBQMoEzhUyoLCoEBSYMLEoQoGzCwOBsDAHOQAe7QIABADwJFKzqbeTRAAAAAElFTkSuQmCC');
+      display: inline-block;
+      vertical-align: middle;
+      width: 20px;
+      height: 22px;
+     }
+        body {
+            margin: 0;
+            background-color: #000000;
+            color: #ffffff;
+            width: 1024px;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        h1 {
+            margin: 0;
+            padding: 0;
+        }
+        a {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+        img {
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+        i {
+            font-style: italic;
+        }
